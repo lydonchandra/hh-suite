@@ -168,7 +168,7 @@ set(HH_SOURCE
         hhfunc.cpp
         list.h
         log.h
-        hhblits_don.cpp hhblits_don.h hhblits_test.cpp)
+        hhblits_don.cpp hhblits_don.h)
 
 add_library(hhviterbialgorithm_with_celloff hhviterbialgorithm.cpp)
 set_property(TARGET hhviterbialgorithm_with_celloff PROPERTY COMPILE_FLAGS "-DVITERBI_CELLOFF=1")
@@ -196,9 +196,6 @@ target_link_libraries(hhblits${EXE_SUFFIX} HH_OBJECTS)
 
 add_executable(hhblits_don${EXE_SUFFIX} hhblits_don.cpp)
 target_link_libraries(hhblits_don${EXE_SUFFIX} HH_OBJECTS)
-
-add_executable(hhblits_test${EXE_SUFFIX} hhblits_test.cpp)
-target_link_libraries(hhblits_test${EXE_SUFFIX} HH_OBJECTS)
 
 add_executable(hhmake${EXE_SUFFIX} hhmake.cpp)
 target_link_libraries(hhmake${EXE_SUFFIX} HH_OBJECTS)

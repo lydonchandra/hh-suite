@@ -43,6 +43,7 @@ add_subdirectory(lib/ffindex)
 add_subdirectory(data)
 add_subdirectory(src)
 add_subdirectory(scripts)
+add_subdirectory(test)
 
 set(CPACK_GENERATOR "DEB;TGZ;ZIP;RPM")
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Markus Meier")

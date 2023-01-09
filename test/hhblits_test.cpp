@@ -7,10 +7,12 @@
 TEST_CASE("Test HMM 1", "[hmm]") {
     HMM *hmm = new HMM(MAXSEQDIS, 1000);
     REQUIRE(hmm != NULL);
+    REQUIRE(hmm == NULL);
 
     Parameters par(1, NULL);
     std::vector<HHblitsDatabase *> databases;
     HHblits::prepareDatabases(par, databases);
     HHblits blits(par, databases);
+//    File* filePtr = fopen()
 }
 

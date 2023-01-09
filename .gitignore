@@ -31,3 +31,4 @@ tags
 .DS_Store
 cmake-build-*/
 .idea/
+**/CMakeFiles/**
