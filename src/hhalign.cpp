@@ -605,14 +605,14 @@ void HHalign::run(FILE* query_fh, char* query_path) {
   Qali = new Alignment(par.maxseq, par.maxres);
   Qali_allseqs = new Alignment(par.maxseq, par.maxres);
 
-  q = new HMM(MAXSEQDIS, par.maxres);
+    query_hmm = new HMM(MAXSEQDIS, par.maxres);
   HMMSimd q_vec(par.maxres);
-  q_tmp = new HMM(MAXSEQDIS, par.maxres);
+    query_hmm_tmp = new HMM(MAXSEQDIS, par.maxres);
 
   // Read input file (HMM, HHM, or alignment format), and add pseudocounts etc.
   Qali->N_in = 0;
   char input_format = 0;
-  ReadQueryFile(par, query_fh, input_format, par.wg, q, Qali, query_path, pb, S, Sim);
+  ReadQueryFile(par, query_fh, input_format, par.wg, query_hmm, Qali, query_path, pb, S, Sim);
 
   if (par.allseqs) {
     *Qali_allseqs = *Qali;  // make a *deep* copy of Qali!
@@ -621,14 +621,14 @@ void HHalign::run(FILE* query_fh, char* query_path) {
     }
   }
 
-  PrepareQueryHMM(par, input_format, q, pc_hhm_context_engine,
-          pc_hhm_context_mode, pb, R);
-  q_vec.MapOneHMM(q);
-  *q_tmp = *q;
+  PrepareQueryHMM(par, input_format, query_hmm, pc_hhm_context_engine,
+                  pc_hhm_context_mode, pb, R);
+  q_vec.MapOneHMM(query_hmm);
+  *query_hmm_tmp = *query_hmm;
 
   // Set query columns in His-tags etc to Null model distribution
   if (par.notags)
-    q->NeutralizeTags(pb);
+    query_hmm->NeutralizeTags(pb);
 
   std::vector<HHEntry*> new_entries;
   for (size_t i = 0; i < tfiles.size(); i++) {
@@ -638,7 +638,7 @@ void HHalign::run(FILE* query_fh, char* query_path) {
 
   int max_template_length = getMaxTemplateLength(new_entries);
   for(int i = 0; i < par.threads; i++) {
-    viterbiMatrices[i]->AllocateBacktraceMatrix(q->L, max_template_length);
+    viterbiMatrices[i]->AllocateBacktraceMatrix(query_hmm->L, max_template_length);
   }
 
   ViterbiRunner viterbirunner(viterbiMatrices, dbs, par.threads);
@@ -658,10 +658,10 @@ void HHalign::run(FILE* query_fh, char* query_path) {
   mergeHitsToQuery(hitlist, previous_hits, premerged_hits, seqs_found, cluster_found, 1);
 
   // Calculate pos-specific weights, AA frequencies and transitions -> f[i][a], tr[i][a]
-  Qali->FrequenciesAndTransitions(q, par.wg, par.mark, par.cons, par.showcons, pb, Sim, NULL, true);
+  Qali->FrequenciesAndTransitions(query_hmm, par.wg, par.mark, par.cons, par.showcons, pb, Sim, NULL, true);
 
   if (par.notags)
-      q->NeutralizeTags(pb);
+      query_hmm->NeutralizeTags(pb);
 
   for(size_t i = 0; i < new_entries.size(); i++) {
     delete new_entries[i];

@@ -25,7 +25,9 @@
 #include <map>
 
 #ifdef OPENMP
+
 #include <omp.h>
+
 #endif
 
 #include <sys/time.h>
@@ -70,101 +72,127 @@ extern "C" {
 
 class HHblits {
 public:
-  HHblits(Parameters& parameters, std::vector<HHblitsDatabase*>& databases);
-  virtual ~HHblits();
+    HHblits(Parameters &parameters, std::vector<HHblitsDatabase *> &databases);
 
-  void Reset();
+    virtual ~HHblits();
 
-  static void ProcessAllArguments(Parameters& par);
+    void Reset();
 
-  //print methods for hhalign and hhblits
-  void printHitList();
-  void printHHRFile();
+    static void ProcessAllArguments(Parameters &par);
 
-  //writer for non-mpi version
-  void writeHHRFile(char* hhrFile);
-  void writeAlisFile(char* basename);
-  void writeScoresFile(char* scoresFile);
-  void writeM8(char* m8File);
-  void writePairwiseAlisFile(char* pairwieseAlisFile, char outformat);
-  void writeAlitabFile(char* alitabFile);
-  void writePsiFile(char* psiFile);
-  void writeHMMFile(char* HMMFile);
-  void writeA3MFile(char* A3MFile);
-  void writeMatricesFile(char* matricesOutputFileName);
+    //print methods for hhalign and hhblits
+    void printHitList();
 
-  //output writer for mpi version
-  static void writeHHRFile(HHblits& hhblits, std::stringstream& out);
-  static void writeScoresFile(HHblits& hhblits, std::stringstream& out);
-  static void writeM8(HHblits& hhblits, std::stringstream& out);
-  static void writePairwiseAlisFile(HHblits& hhblits, std::stringstream& out);
-  static void writeAlitabFile(HHblits& hhblits, std::stringstream& out);
-  static void writePsiFile(HHblits& hhblits, std::stringstream& out);
-  static void writeHMMFile(HHblits& hhblits, std::stringstream& out);
-  static void writeA3MFile(HHblits& hhblits, std::stringstream& out);
-  static void writeMatricesFile(HHblits& hhblits, std::stringstream& out);
+    void printHHRFile();
 
-  static void prepareDatabases(Parameters& par, std::vector<HHblitsDatabase*>& databases);
+    //writer for non-mpi version
+    void writeHHRFile(char *hhrFile);
 
-  virtual void run(FILE* query_fh, char* query_path);
-  void run(ffindex_entry_t* entry, char* data,
-      ffindex_index_t* sequence_index, char* seq,
-      ffindex_index_t* header_index, char* header);
+    void writeAlisFile(char *basename);
 
+    void writeScoresFile(char *scoresFile);
+
+    void writeM8(char *m8File);
+
+    void writePairwiseAlisFile(char *pairwieseAlisFile, char outformat);
+
+    void writeAlitabFile(char *alitabFile);
+
+    void writePsiFile(char *psiFile);
+
+    void writeHMMFile(char *HMMFile);
+
+    void writeA3MFile(char *A3MFile);
+
+    void writeMatricesFile(char *matricesOutputFileName);
+
+    //output writer for mpi version
+    static void writeHHRFile(HHblits &hhblits, std::stringstream &out);
+
+    static void writeScoresFile(HHblits &hhblits, std::stringstream &out);
+
+    static void writeM8(HHblits &hhblits, std::stringstream &out);
+
+    static void writePairwiseAlisFile(HHblits &hhblits, std::stringstream &out);
+
+    static void writeAlitabFile(HHblits &hhblits, std::stringstream &out);
+
+    static void writePsiFile(HHblits &hhblits, std::stringstream &out);
+
+    static void writeHMMFile(HHblits &hhblits, std::stringstream &out);
+
+    static void writeA3MFile(HHblits &hhblits, std::stringstream &out);
+
+    static void writeMatricesFile(HHblits &hhblits, std::stringstream &out);
+
+    static void prepareDatabases(Parameters &par, std::vector<HHblitsDatabase *> &databases);
+
+    virtual void run(FILE *query_fh, char *query_path);
+
+    void run(ffindex_entry_t *entry, char *data,
+             ffindex_index_t *sequence_index, char *seq,
+             ffindex_index_t *header_index, char *header);
+
+
+    // substitution matrix flavours
+    float __attribute__((aligned(32))) P[20][20];
+    float __attribute__((aligned(32))) R[20][20];
+    float __attribute__((aligned(32))) Sim[20][20];
+    float __attribute__((aligned(32))) S[20][20];
+    float __attribute__((aligned(32))) pb[21];
 protected:
-	// substitution matrix flavours
-	float __attribute__((aligned(32))) P[20][20];
-	float __attribute__((aligned(32))) R[20][20];
-	float __attribute__((aligned(32))) Sim[20][20];
-	float __attribute__((aligned(32))) S[20][20];
-	float __attribute__((aligned(32))) pb[21];
+    // secondary structure matrices
+    float S73[NDSSP][NSSPRED][MAXCF];
+    float S37[NSSPRED][MAXCF][NDSSP];
+    float S33[NSSPRED][MAXCF][NSSPRED][MAXCF];
 
-	// secondary structure matrices
-	float S73[NDSSP][NSSPRED][MAXCF];
-	float S37[NSSPRED][MAXCF][NDSSP];
-	float S33[NSSPRED][MAXCF][NSSPRED][MAXCF];
+    Parameters &par;
 
-	Parameters& par;
+    cs::ContextLibrary<cs::AA> *context_lib;
+    cs::Crf<cs::AA> *crf;
+    cs::Pseudocounts<cs::AA> *pc_hhm_context_engine;
+    cs::Admix *pc_hhm_context_mode;
+    cs::Pseudocounts<cs::AA> *pc_prefilter_context_engine;
+    cs::Admix *pc_prefilter_context_mode;
 
-	cs::ContextLibrary<cs::AA>* context_lib;
-	cs::Crf<cs::AA>* crf;
-	cs::Pseudocounts<cs::AA>* pc_hhm_context_engine;
-	cs::Admix* pc_hhm_context_mode;
-	cs::Pseudocounts<cs::AA>* pc_prefilter_context_engine;
-	cs::Admix* pc_prefilter_context_mode;
+    //database filenames
+    std::vector<HHblitsDatabase *> dbs;
 
-	//database filenames
-	std::vector<HHblitsDatabase*> dbs;
+    // Create query HMM with maximum of par.maxres match states
+    HMM *query_hmm;
+    // Create query HMM with maximum of par.maxres match states (needed for prefiltering)
+    HMM *query_hmm_tmp;
 
-	// Create query HMM with maximum of par.maxres match states
-	HMM* q;
-	// Create query HMM with maximum of par.maxres match states (needed for prefiltering)
-	HMM* q_tmp;
+    // output A3M generated by merging A3M alignments for significant hits to the query alignment
+    Alignment *Qali;
+    // output A3M alignment with no sequence filtered out (only active with -all option)
+    Alignment *Qali_allseqs;
 
-	// output A3M generated by merging A3M alignments for significant hits to the query alignment
-	Alignment* Qali;
-	// output A3M alignment with no sequence filtered out (only active with -all option)
-	Alignment* Qali_allseqs;
+    ViterbiMatrix **viterbiMatrices;
+    PosteriorMatrix **posteriorMatrices;
 
-	ViterbiMatrix** viterbiMatrices;
-	PosteriorMatrix** posteriorMatrices;
+    HitList hitlist; // list of hits with one Hit object for each pairwise comparison done
+    std::map<int, Alignment *> alis;
 
-	HitList hitlist; // list of hits with one Hit object for each pairwise comparison done
-	std::map<int, Alignment*> alis;
-    void mergeHitsToQuery(HitList &hitlist, Hash<Hit>* previous_hits, Hash<Hit>* premerged_hits, int& seqs_found, int& cluster_found, int min_col_realign);
-    void perform_realign(HMMSimd& q_vec, const char input_format, std::vector<HHEntry*>& hits_to_realign, int min_col_realign);
+    void mergeHitsToQuery(HitList &hitlist, Hash<Hit> *previous_hits, Hash<Hit> *premerged_hits, int &seqs_found,
+                          int &cluster_found, int min_col_realign);
+
+    void perform_realign(HMMSimd &q_vec, const char input_format, std::vector<HHEntry *> &hits_to_realign,
+                         int min_col_realign);
 
 
-	void add_hits_to_hitlist(std::vector<Hit>& hits, HitList& hitlist);
+    void add_hits_to_hitlist(std::vector<Hit> &hits, HitList &hitlist);
 
 
 private:
-	static void help(Parameters& par, char all = 0);
-	static void ProcessArguments(Parameters& par);
-	void RescoreWithViterbiKeepAlignment(HMMSimd& q_vec, Hash<Hit>* previous_hits);
+    static void help(Parameters &par, char all = 0);
 
-    void premerge(Hash<Hit>* previous_hits, Hash<Hit>* premerged_hits,
-                  int& seqs_found, int& cluster_found, int min_col_realign);
+    static void ProcessArguments(Parameters &par);
+
+    void RescoreWithViterbiKeepAlignment(HMMSimd &q_vec, Hash<Hit> *previous_hits);
+
+    void premerge(Hash<Hit> *previous_hits, Hash<Hit> *premerged_hits,
+                  int &seqs_found, int &cluster_found, int min_col_realign);
 };
 
 #endif /* HHBLITS_H_ */

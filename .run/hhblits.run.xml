@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="hhblits" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="-cpu 4 -i ../../data/querydon1.seq -d ../../database/uniclust30_2018_08/uniclust30_2018_08 -oa3m ../../data/querydon1.a3m -n 1" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="hhsuite" TARGET_NAME="hhblits" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="hhsuite" RUN_TARGET_NAME="hhblits">
+    <method v="2">
+      <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+    </method>
+  </configuration>
+</component>
