@@ -25,9 +25,11 @@ TEST_CASE("Test HMM 1", "[hmm]") {
     HMM *queryHmm = new HMM(MAXSEQDIS, param.maxres);
     char infile[NAMELEN];
     strcpy(infile, fastaPath.c_str());
-    ReadQueryFile(param, queryFile, input_format, use_global_weight, queryHmm, queryAlign, infile, blits.pb,
-                  blits.S, blits.Sim);
+    ReadQueryFile(param, queryFile, input_format, use_global_weight, queryHmm, queryAlign, infile, blits.pb, blits.S,
+                  blits.Sim);
     REQUIRE(queryHmm != NULL);
+    REQUIRE(queryAlign->X != NULL);
+    REQUIRE(queryAlign->X[0][0] == 0x14);
 }
 
 TEST_CASE("Test HHBlitsDatabase1", "[hhblitsDatabase]") {

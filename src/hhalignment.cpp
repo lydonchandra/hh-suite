@@ -68,6 +68,7 @@ Alignment::~Alignment() {
 }
 
 char *Alignment::initX(int len) {
+    //todo: why + 2 at the end ? 
     int seqSimdLength = (len) / (VECSIZE_INT * 4) + 2;
     seqSimdLength *= (VECSIZE_INT * 4);
     char *ptr = (char *) malloc_simd_int(seqSimdLength);

@@ -129,8 +129,8 @@ public:
     void GetPositionSpecificWeights(float *w[], char use_global_weights);
 
     char readCommentLine;   // Set to 1, if a comment line with '#' is read
-
-private:
+//todo: disable temporarily so can test
+//private:
     char **X;               // X[k][i] contains column i of sequence k in alignment (first seq=0, first char=1) (0-3: ARND ..., 20:X, 21:GAP)
     short unsigned int **I; // I[k][i] contains the number of inserts AFTER match state i (first=0)
     char *display;          // display[k]=1 if sequence will be displayed in output alignments; 0 otherwise (first=0)
